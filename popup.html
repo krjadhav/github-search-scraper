@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GitHub Profile Scraper</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>GitHub Profile Scraper</h1>
+    <button id="btnFetch">Fetch Profiles</button>
+    <button id="btnExport" disabled>Export to Google Sheets</button>
+    <div id="progress"></div>
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Location</th>
+          <th>Company</th>
+          <th>Email</th>
+          <th>Website</th>
+          <th>Repos</th>
+          <th>Followers</th>
+          <th>Bio</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Profile Scraper",
+  "description": "Extract GitHub developer profiles from search results and export them to Google Sheets.",
+  "version": "0.1.0",
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "identity",
+    "storage",
+    "https://api.github.com/",
+    "https://www.googleapis.com/"
+  ],
+  "host_permissions": [
+    "https://github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/search*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "oauth2": {
+    "client_id": "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,38 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 400px;
+  margin: 0;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+button {
+  margin-right: 5px;
+  padding: 5px 10px;
+}
+
+#progress {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+#resultsTable {
+  margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#resultsTable th, #resultsTable td {
+  border: 1px solid #ddd;
+  padding: 4px;
+  vertical-align: top;
+}
+
+#resultsTable th {
+  background: #f1f1f1;
+}
