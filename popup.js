@@ -23,15 +23,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Export to Google Sheets.
+  // Export to CSV.
   btnExport.addEventListener('click', async () => {
-    progressDiv.textContent = 'Exporting to Google Sheets...';
+    progressDiv.textContent = 'Exporting to CSV...';
     try {
-      const sheetUrl = await exportToSheets(profiles);
-      progressDiv.innerHTML = `Exported! <a href="${sheetUrl}" target="_blank">Open Sheet</a>`;
+      const message = await exportToSheets(profiles);
+      progressDiv.textContent = message;
     } catch (err) {
       console.error(err);
-      progressDiv.textContent = 'Error exporting to Sheets: ' + err.message;
+      progressDiv.textContent = 'Error exporting to CSV: ' + err.message;
     }
   });
 
@@ -68,10 +68,85 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function exportToSheets(rows) {
-    // NOTE: OAuth & Sheets API logic would be implemented here.
-    // For initial scaffold, we'll just simulate.
-    return new Promise((resolve) => {
-      setTimeout(() => resolve('https://docs.google.com/spreadsheets/d/FAKE_SHEET_ID'), 1000);
+    try {
+      // Generate CSV content
+      const csvContent = generateCSV(rows);
+      
+      // Create and trigger download
+      downloadCSV(csvContent, `github-profiles-${new Date().toISOString().split('T')[0]}.csv`);
+      
+      return 'CSV file downloaded successfully!';
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      throw new Error(`Export failed: ${error.message}`);
+    }
+  }
+
+  // Generate CSV content from profile data
+  function generateCSV(profiles) {
+    // Define headers
+    const headers = ['Name', 'Username', 'Location', 'Company', 'Email', 'Website', 'Public Repos', 'Followers', 'Bio'];
+    
+    // Convert profiles to CSV rows
+    const csvRows = [];
+    
+    // Add header row
+    csvRows.push(headers.join(','));
+    
+    // Add data rows
+    profiles.forEach(profile => {
+      const row = [
+        escapeCSVField(profile.name || ''),
+        escapeCSVField(profile.login || ''),
+        escapeCSVField(profile.location || ''),
+        escapeCSVField(profile.company || ''),
+        escapeCSVField(profile.email || ''),
+        escapeCSVField(profile.blog || ''),
+        profile.public_repos || 0,
+        profile.followers || 0,
+        escapeCSVField(profile.bio || '')
+      ];
+      csvRows.push(row.join(','));
     });
+    
+    return csvRows.join('\n');
+  }
+
+  // Escape CSV fields that contain commas, quotes, or newlines
+  function escapeCSVField(field) {
+    if (typeof field !== 'string') return field;
+    
+    // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
+    if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+      return '"' + field.replace(/"/g, '""') + '"';
+    }
+    
+    return field;
+  }
+
+  // Download CSV file
+  function downloadCSV(csvContent, filename) {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      // Use HTML5 download attribute
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      // Fallback for older browsers
+      if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(blob, filename);
+      } else {
+        const url = URL.createObjectURL(blob);
+        window.open(url);
+      }
+    }
   }
 });
